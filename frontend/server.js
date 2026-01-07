@@ -1,14 +1,17 @@
-const handler = require('serve-handler');
-const http = require('http');
+const express = require('express');
+const path = require('path');
 
-const port = process.env.PORT || 8080;
+const app = express();
+const PORT = process.env.PORT || 8080;
 
-const server = http.createServer((request, response) => {
-  return handler(request, response, {
-    public: 'build'
-  });
+// Serve static files
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Handle React routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-server.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
