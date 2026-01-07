@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './App-NFI.css';
 
 function App() {
   const [options, setOptions] = useState(null);
@@ -85,12 +85,31 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🏭 NFI Corp - Price Calculator</h1>
-        <p>Get instant AI-powered price estimates for industrial nameplates, labels & decals</p>
+        <div className="header-top">
+          <div className="logo-section">
+            <h1>
+              <span className="nfi-orange">NFI</span> Corp
+            </h1>
+          </div>
+          <div className="contact-header">
+            <a href="tel:8009998900" className="phone-number">800-999-8900</a>
+            <button className="quote-button">Get a Quote</button>
+          </div>
+        </div>
+        <div className="header-tagline">
+          <p>The Global Leader in High Performing Printed Graphic Solutions™</p>
+        </div>
       </header>
 
       <div className="container">
+        <div className="info-box">
+          <h3>Instant Price Calculator</h3>
+          <p>Get immediate AI-powered price estimates for your industrial nameplates, labels, decals, and asset tags. Configure your specifications below and receive a detailed quote instantly.</p>
+        </div>
+
         <form onSubmit={handleSubmit} className="calculator-form">
+          <h2>Configure Your Order</h2>
+          
           <div className="form-grid">
             <div className="form-group">
               <label htmlFor="product_type">Product Type</label>
@@ -215,18 +234,18 @@ function App() {
                 value={formData.turnaround}
                 onChange={handleInputChange}
               >
-                <option value="standard">Standard (7-10 days)</option>
-                <option value="rush">Rush (3-5 days)</option>
-                <option value="express">Express (1-2 days)</option>
+                <option value="standard">Standard (7-10 business days)</option>
+                <option value="rush">Rush (3-5 business days)</option>
+                <option value="express">Express (1-2 business days)</option>
               </select>
             </div>
           </div>
 
           <div className="form-group full-width">
             <label>Special Features (Optional)</label>
-            <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '0.5rem'}}>
+            <div className="checkbox-group">
               {options.special_features?.map(feature => (
-                <label key={feature} style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                <label key={feature} className="checkbox-label">
                   <input
                     type="checkbox"
                     name="special_features"
@@ -248,12 +267,12 @@ function App() {
               value={formData.additional_notes}
               onChange={handleInputChange}
               rows="3"
-              placeholder="Any special requirements or instructions..."
+              placeholder="Any special requirements, custom dimensions, or additional information..."
             />
           </div>
 
           <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'Calculating...' : 'Calculate Price'}
+            {loading ? 'Calculating Price...' : 'Calculate Price Estimate'}
           </button>
         </form>
 
@@ -265,11 +284,11 @@ function App() {
 
         {estimate && (
           <div className="estimate-result">
-            <h2>Price Estimate</h2>
+            <h2>Your Price Estimate</h2>
             
             <div className="price-highlight">
               <div className="total-price">
-                <span className="label">Total Price</span>
+                <span className="label">Total Estimated Price</span>
                 <span className="amount">${estimate.total_price.toFixed(2)}</span>
               </div>
               <div className="per-unit">
@@ -278,7 +297,7 @@ function App() {
             </div>
 
             <div className="price-breakdown">
-              <h3>Price Breakdown</h3>
+              <h3>Detailed Price Breakdown</h3>
               <div className="breakdown-grid">
                 <div className="breakdown-item">
                   <span>Base Price</span>
@@ -320,7 +339,7 @@ function App() {
 
               {estimate.breakdown.volume_discount_applied && (
                 <div className="discount-badge">
-                  ✓ Volume discount applied
+                  ✓ Volume Discount Applied
                 </div>
               )}
             </div>
@@ -330,14 +349,49 @@ function App() {
             </div>
 
             <div className="confidence-badge">
-              Confidence: {estimate.confidence}
+              Pricing Confidence: {estimate.confidence}
+            </div>
+
+            <div className="certification-badges">
+              <span className="badge">ISO 9001:2015 Certified</span>
+              <span className="badge">UL® Recognized</span>
+              <span className="badge">CSA Certified</span>
+              <span className="badge">ITAR Registered</span>
             </div>
           </div>
         )}
       </div>
 
       <footer>
-        <p>Powered by AI • Instant accurate quotes for industrial nameplates, labels & decals</p>
+        <div className="footer-content">
+          <div className="footer-section">
+            <h4>NFI Corp</h4>
+            <p>Nameplates For Industry</p>
+            <p>22 Logan Street</p>
+            <p>New Bedford, MA 02740</p>
+          </div>
+          <div className="footer-section">
+            <h4>Contact Us</h4>
+            <p>Phone: <a href="tel:5089989021">508-998-9021</a></p>
+            <p>Toll Free: <a href="tel:8009998900">800-999-8900</a></p>
+            <p>Email: <a href="mailto:info@nficorp.com">info@nficorp.com</a></p>
+          </div>
+          <div className="footer-section">
+            <h4>Products</h4>
+            <p><a href="https://nameplatesforindustry.com/our-products/labels/">Labels & Decals</a></p>
+            <p><a href="https://nameplatesforindustry.com/our-products/nameplates/">Nameplates</a></p>
+            <p><a href="https://nameplatesforindustry.com/our-products/asset-inventory-tags/">Asset Tags</a></p>
+            <p><a href="https://nameplatesforindustry.com/our-products/ul-labels/">UL/CSA Labels</a></p>
+          </div>
+          <div className="footer-section">
+            <h4>About</h4>
+            <p>We give your Products the identification and the recognition they deserve ®</p>
+            <p style={{marginTop: '1rem'}}>Powered by AI • Instant Price Estimates</p>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>© {new Date().getFullYear()} NFI Corp - Nameplates for Industry. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );
