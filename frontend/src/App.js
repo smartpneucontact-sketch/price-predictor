@@ -4,13 +4,14 @@ import './App.css';
 function App() {
   const [options, setOptions] = useState(null);
   const [formData, setFormData] = useState({
-    paper_type: 'standard',
-    paper_size: 'A4',
-    color_type: 'bw',
+    product_type: 'label',
+    material: 'polyester',
+    size: '2x4',
     quantity: 100,
-    sides: 'single',
-    binding: 'none',
-    lamination: 'none',
+    colors: '1_color',
+    finish: 'none',
+    adhesive: 'standard',
+    special_features: [],
     turnaround: 'standard',
     additional_notes: ''
   });
@@ -29,11 +30,24 @@ function App() {
   }, [API_URL]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'quantity' ? parseInt(value) : value
-    }));
+    const { name, value, type, checked } = e.target;
+    
+    if (type === 'checkbox') {
+      // Handle special_features checkboxes
+      setFormData(prev => {
+        const features = prev.special_features || [];
+        if (checked) {
+          return { ...prev, special_features: [...features, value] };
+        } else {
+          return { ...prev, special_features: features.filter(f => f !== value) };
+        }
+      });
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: name === 'quantity' ? parseInt(value) : value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -71,53 +85,61 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🖨️ Print Job Price Calculator</h1>
-        <p>Get instant AI-powered price estimates for your printing needs</p>
+        <h1>🏭 NFI Corp - Price Calculator</h1>
+        <p>Get instant AI-powered price estimates for industrial nameplates, labels & decals</p>
       </header>
 
       <div className="container">
         <form onSubmit={handleSubmit} className="calculator-form">
           <div className="form-grid">
             <div className="form-group">
-              <label htmlFor="paper_type">Paper Type</label>
+              <label htmlFor="product_type">Product Type</label>
               <select
-                id="paper_type"
-                name="paper_type"
-                value={formData.paper_type}
+                id="product_type"
+                name="product_type"
+                value={formData.product_type}
                 onChange={handleInputChange}
               >
-                {options.paper_types.map(type => (
+                {options.product_types?.map(type => (
                   <option key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="form-group">
-              <label htmlFor="paper_size">Paper Size</label>
+              <label htmlFor="material">Material</label>
               <select
-                id="paper_size"
-                name="paper_size"
-                value={formData.paper_size}
+                id="material"
+                name="material"
+                value={formData.material}
                 onChange={handleInputChange}
               >
-                {options.paper_sizes.map(size => (
-                  <option key={size} value={size}>{size}</option>
+                {options.materials?.map(material => (
+                  <option key={material} value={material}>
+                    {material === 'polyester' ? 'Polyester (PET/Mylar®)' :
+                     material === 'polycarbonate' ? 'Polycarbonate (Lexan®)' :
+                     material === 'stainless_steel' ? 'Stainless Steel' :
+                     material.charAt(0).toUpperCase() + material.slice(1)}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div className="form-group">
-              <label htmlFor="color_type">Print Type</label>
+              <label htmlFor="size">Size</label>
               <select
-                id="color_type"
-                name="color_type"
-                value={formData.color_type}
+                id="size"
+                name="size"
+                value={formData.size}
                 onChange={handleInputChange}
               >
-                <option value="bw">Black & White</option>
-                <option value="color">Color</option>
+                {options.sizes?.map(size => (
+                  <option key={size} value={size}>
+                    {size === 'custom' ? 'Custom Size' : `${size} inches`}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -135,45 +157,51 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="sides">Sides</label>
+              <label htmlFor="colors">Color Options</label>
               <select
-                id="sides"
-                name="sides"
-                value={formData.sides}
+                id="colors"
+                name="colors"
+                value={formData.colors}
                 onChange={handleInputChange}
               >
-                <option value="single">Single-Sided</option>
-                <option value="double">Double-Sided</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="binding">Binding</label>
-              <select
-                id="binding"
-                name="binding"
-                value={formData.binding}
-                onChange={handleInputChange}
-              >
-                {options.binding_options.map(binding => (
-                  <option key={binding} value={binding}>
-                    {binding.charAt(0).toUpperCase() + binding.slice(1)}
+                {options.colors?.map(color => (
+                  <option key={color} value={color}>
+                    {color === '1_color' ? '1 Color' :
+                     color === '2_color' ? '2 Colors' :
+                     'Full Color'}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="form-group">
-              <label htmlFor="lamination">Lamination</label>
+              <label htmlFor="finish">Finish</label>
               <select
-                id="lamination"
-                name="lamination"
-                value={formData.lamination}
+                id="finish"
+                name="finish"
+                value={formData.finish}
                 onChange={handleInputChange}
               >
-                {options.lamination_options.map(lam => (
-                  <option key={lam} value={lam}>
-                    {lam.charAt(0).toUpperCase() + lam.slice(1)}
+                {options.finishes?.map(finish => (
+                  <option key={finish} value={finish}>
+                    {finish === 'domed' ? 'Domed (Urethane)' :
+                     finish.charAt(0).toUpperCase() + finish.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="adhesive">Adhesive</label>
+              <select
+                id="adhesive"
+                name="adhesive"
+                value={formData.adhesive}
+                onChange={handleInputChange}
+              >
+                {options.adhesives?.map(adhesive => (
+                  <option key={adhesive} value={adhesive}>
+                    {adhesive.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                   </option>
                 ))}
               </select>
@@ -187,10 +215,28 @@ function App() {
                 value={formData.turnaround}
                 onChange={handleInputChange}
               >
-                <option value="standard">Standard (5 days)</option>
-                <option value="express">Express (2 days)</option>
-                <option value="same_day">Same Day</option>
+                <option value="standard">Standard (7-10 days)</option>
+                <option value="rush">Rush (3-5 days)</option>
+                <option value="express">Express (1-2 days)</option>
               </select>
+            </div>
+          </div>
+
+          <div className="form-group full-width">
+            <label>Special Features (Optional)</label>
+            <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '0.5rem'}}>
+              {options.special_features?.map(feature => (
+                <label key={feature} style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                  <input
+                    type="checkbox"
+                    name="special_features"
+                    value={feature}
+                    checked={formData.special_features?.includes(feature)}
+                    onChange={handleInputChange}
+                  />
+                  {feature.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                </label>
+              ))}
             </div>
           </div>
 
@@ -246,16 +292,22 @@ function App() {
                   <span>Labor Cost</span>
                   <span>${estimate.labor_cost.toFixed(2)}</span>
                 </div>
-                {estimate.breakdown.binding > 0 && (
+                {estimate.breakdown.finish > 0 && (
                   <div className="breakdown-item">
-                    <span>Binding</span>
-                    <span>${estimate.breakdown.binding.toFixed(2)}</span>
+                    <span>Finish</span>
+                    <span>${estimate.breakdown.finish.toFixed(2)}</span>
                   </div>
                 )}
-                {estimate.breakdown.lamination > 0 && (
+                {estimate.breakdown.adhesive > 0 && (
                   <div className="breakdown-item">
-                    <span>Lamination</span>
-                    <span>${estimate.breakdown.lamination.toFixed(2)}</span>
+                    <span>Adhesive</span>
+                    <span>${estimate.breakdown.adhesive.toFixed(2)}</span>
+                  </div>
+                )}
+                {estimate.breakdown.special_features > 0 && (
+                  <div className="breakdown-item">
+                    <span>Special Features</span>
+                    <span>${estimate.breakdown.special_features.toFixed(2)}</span>
                   </div>
                 )}
                 {estimate.rush_fee > 0 && (
@@ -285,7 +337,7 @@ function App() {
       </div>
 
       <footer>
-        <p>Powered by AI • Instant accurate quotes for your printing needs</p>
+        <p>Powered by AI • Instant accurate quotes for industrial nameplates, labels & decals</p>
       </footer>
     </div>
   );
